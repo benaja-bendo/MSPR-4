@@ -1,159 +1,69 @@
-# Turborepo starter
+# COFRAP Monorepo
 
-This Turborepo starter is maintained by the Turborepo core team.
+Monorepo Turborepo pour la plateforme COFRAP (auth, MFA, mots de passe).
 
-## Using this example
+## Structure
 
-Run the following command:
-
-```sh
-npx create-turbo@latest
+```
+cofrap-monorepo/
+├── apps/
+│   ├── frontend/      # Next.js (UI)
+│   ├── fn-auth/       # NestJS → OpenFaaS (authentification)
+│   ├── fn-mfa/        # NestJS → OpenFaaS (MFA)
+│   └── fn-password/   # NestJS → OpenFaaS (hash / validation)
+├── packages/
+│   ├── database/      # Prisma + PostgreSQL
+│   ├── shared-types/  # DTOs Zod + interfaces TypeScript
+│   ├── eslint-config/
+│   └── typescript-config/
+└── turbo.json
 ```
 
-## What's inside?
+## Prérequis
 
-This Turborepo includes the following packages/apps:
+- Node.js >= 18
+- PostgreSQL (local ou conteneur)
 
-### Apps and Packages
+## Démarrage rapide
 
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
+```bash
+# 1. Installer les dépendances
+npm install
 
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
+# 2. Configurer la base de données
+cp packages/database/.env.example packages/database/.env
+npm run db:generate
+npm run db:push
 
-### Utilities
-
-This Turborepo has some additional tools already setup for you:
-
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
-
-### Build
-
-To build all apps and packages, run the following command:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
-
-```sh
-cd my-turborepo
-turbo build
+# 3. Lancer tout en dev
+npm run dev
 ```
 
-Without global `turbo`, use your package manager:
+## Ports
 
-```sh
-cd my-turborepo
-npx turbo build
-npm dlx turbo build
-npm exec turbo build
+| Application   | Port dev |
+|---------------|----------|
+| frontend      | 3000     |
+| fn-auth       | 8080     |
+| fn-mfa        | 8080     |
+| fn-password   | 8080     |
+
+> En dev local, lancez une seule fonction NestJS à la fois (même port 8080 OpenFaaS).
+
+## Docker (OpenFaaS)
+
+Depuis la racine du monorepo :
+
+```bash
+docker build -f apps/fn-auth/Dockerfile -t cofrap/fn-auth .
+docker build -f apps/fn-mfa/Dockerfile -t cofrap/fn-mfa .
+docker build -f apps/fn-password/Dockerfile -t cofrap/fn-password .
 ```
 
-You can build a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
+## Scripts utiles
 
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
-
-```sh
-turbo build --filter=docs
-```
-
-Without global `turbo`:
-
-```sh
-npx turbo build --filter=docs
-npm exec turbo build --filter=docs
-npm exec turbo build --filter=docs
-```
-
-### Develop
-
-To develop all apps and packages, run the following command:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
-
-```sh
-cd my-turborepo
-turbo dev
-```
-
-Without global `turbo`, use your package manager:
-
-```sh
-cd my-turborepo
-npx turbo dev
-npm exec turbo dev
-npm exec turbo dev
-```
-
-You can develop a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
-
-```sh
-turbo dev --filter=web
-```
-
-Without global `turbo`:
-
-```sh
-npx turbo dev --filter=web
-npm exec turbo dev --filter=web
-npm exec turbo dev --filter=web
-```
-
-### Remote Caching
-
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
-
-Turborepo can use a technique known as [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
-
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
-
-```sh
-cd my-turborepo
-turbo login
-```
-
-Without global `turbo`, use your package manager:
-
-```sh
-cd my-turborepo
-npx turbo login
-npm exec turbo login
-npm exec turbo login
-```
-
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
-
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
-
-```sh
-turbo link
-```
-
-Without global `turbo`:
-
-```sh
-npx turbo link
-npm exec turbo link
-npm exec turbo link
-```
-
-## Useful Links
-
-Learn more about the power of Turborepo:
-
-- [Tasks](https://turborepo.dev/docs/crafting-your-repository/running-tasks)
-- [Caching](https://turborepo.dev/docs/crafting-your-repository/caching)
-- [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching)
-- [Filtering](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters)
-- [Configuration Options](https://turborepo.dev/docs/reference/configuration)
-- [CLI Usage](https://turborepo.dev/docs/reference/command-line-reference)
+- `npm run build` — compile tous les packages et apps
+- `npm run dev` — mode développement (Turbo)
+- `npm run db:generate` — génère le client Prisma
+- `npm run db:push` — synchronise le schéma avec PostgreSQL
+- `npm run db:migrate` — migrations Prisma
