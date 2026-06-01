@@ -9,7 +9,8 @@
     "check-types": "turbo run check-types",
     "db:generate": "turbo run db:generate",
     "db:push": "npm run db:push --workspace=@cofrap/database",
-    "db:migrate": "npm run db:migrate --workspace=@cofrap/database"
+    "db:migrate": "npm run db:migrate --workspace=@cofrap/database",
+    "db:migrate:deploy": "npm run db:migrate:deploy --workspace=@cofrap/database"
   },
   "devDependencies": {
     "prettier": "^3.7.4",

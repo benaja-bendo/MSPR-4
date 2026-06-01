@@ -33,7 +33,9 @@ npm install
 # 2. Configurer la base de données
 cp packages/database/.env.example packages/database/.env
 npm run db:generate
-npm run db:push
+# Appliquer les migrations (recommandé — local ou cluster)
+npm run db:migrate:deploy
+# Alternative rapide en dev uniquement : npm run db:push
 
 # 3. Lancer tout en dev
 npm run dev
@@ -66,4 +68,5 @@ docker build -f apps/fn-password/Dockerfile -t cofrap/fn-password .
 - `npm run dev` — mode développement (Turbo)
 - `npm run db:generate` — génère le client Prisma
 - `npm run db:push` — synchronise le schéma avec PostgreSQL
-- `npm run db:migrate` — migrations Prisma
+- `npm run db:migrate` — créer une nouvelle migration en dev (`prisma migrate dev`)
+- `npm run db:migrate:deploy` — appliquer les migrations SQL (prod / K8s / collègue infra)
