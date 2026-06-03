@@ -1,5 +1,7 @@
 # Contrat d'intégration K8S / OpenFaaS — COFRAP MSPR
 
+> **Guide pas à pas Minikube** : [deploiement-minikube.md](./deploiement-minikube.md)
+
 ## Fonctions OpenFaaS
 
 | Nom déployé | Rôle | Routes |

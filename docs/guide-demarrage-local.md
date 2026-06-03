@@ -417,9 +417,10 @@ docker run --rm -p 8080:8080 `
 
 > Sous Windows Docker Desktop, `host.docker.internal` pointe vers la machine hôte où tourne PostgreSQL.
 
-### OpenFaaS
+### OpenFaaS / Minikube
 
-Voir [`integration-k8s.md`](./integration-k8s.md) et `deploy/stack.yml`.
+- Cluster local : **[deploiement-minikube.md](./deploiement-minikube.md)**
+- Contrat technique : [`integration-k8s.md`](./integration-k8s.md) et `deploy/stack.yml`
 
 ---
 

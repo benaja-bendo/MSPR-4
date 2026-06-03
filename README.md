@@ -8,6 +8,7 @@ Monorepo Turborepo : auth, MFA, génération de mot de passe (OpenFaaS / NestJS)
 |----------|---------|
 | **[Guide démarrage local (complet)](docs/guide-demarrage-local.md)** | Installation, PostgreSQL, lancement des 3 fonctions + frontend, tests, dépannage |
 | [Intégration K8s / OpenFaaS](docs/integration-k8s.md) | Déploiement cluster, Ingress, secrets |
+| **[Déploiement Minikube](docs/deploiement-minikube.md)** | OpenFaaS + PostgreSQL + frontend sur Minikube |
 
 ## Conformité MSPR (résumé)
 
