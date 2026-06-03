@@ -1,0 +1,22 @@
+{
+  "name": "@cofrap/crypto",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "check-types": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@cofrap/typescript-config": "*",
+    "@types/node": "^22.15.0",
+    "typescript": "5.9.2"
+  }
+}

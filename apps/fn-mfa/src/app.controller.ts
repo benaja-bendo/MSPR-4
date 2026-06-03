@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Post } from '@nestjs/common';
-import { mfaVerifySchema } from '@cofrap/shared-types';
+import { mfaConfirmSchema, mfaSetupSchema } from '@cofrap/shared-types';
 import { AppService } from './app.service';
 
 @Controller()
@@ -12,30 +12,20 @@ export class AppController {
   }
 
   @Post('setup')
-  setupMfa(@Body() body: { userId: string }) {
-    if (!body.userId) {
-      return { success: false, error: 'userId requis' };
-    }
-
-    const secret = this.appService.generateSecret();
-    return {
-      success: true,
-      userId: body.userId,
-      secret,
-      otpauthUrl: `otpauth://totp/COFRAP:${body.userId}?secret=${secret}&issuer=COFRAP`,
-    };
-  }
-
-  @Post('verify')
-  verifyMfa(@Body() body: unknown) {
-    const parsed = mfaVerifySchema.safeParse(body);
+  async setup(@Body() body: unknown) {
+    const parsed = mfaSetupSchema.safeParse(body);
     if (!parsed.success) {
       return { success: false, errors: parsed.error.flatten().fieldErrors };
     }
+    return this.appService.setup(parsed.data.username);
+  }
 
-    return {
-      success: true,
-      verified: this.appService.verifyCode(parsed.data.code),
-    };
+  @Post('confirm')
+  async confirm(@Body() body: unknown) {
+    const parsed = mfaConfirmSchema.safeParse(body);
+    if (!parsed.success) {
+      return { success: false, errors: parsed.error.flatten().fieldErrors };
+    }
+    return this.appService.confirm(parsed.data.username, parsed.data.code);
   }
 }

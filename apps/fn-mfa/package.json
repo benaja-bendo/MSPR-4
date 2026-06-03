@@ -21,8 +21,12 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
+    "@cofrap/crypto": "*",
+    "@cofrap/database": "*",
     "@cofrap/shared-types": "*",
     "@nestjs/common": "^11.0.1",
+    "otplib": "^12.0.1",
+    "qrcode": "^1.5.4",
     "@nestjs/core": "^11.0.1",
     "@nestjs/platform-express": "^11.0.1",
     "reflect-metadata": "^0.2.2",
@@ -35,6 +39,7 @@
     "@nestjs/schematics": "^11.0.0",
     "@nestjs/testing": "^11.0.1",
     "@types/express": "^5.0.0",
+    "@types/qrcode": "^1.5.5",
     "@types/jest": "^30.0.0",
     "@types/node": "^24.0.0",
     "@types/supertest": "^7.0.0",

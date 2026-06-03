@@ -7,14 +7,19 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+/// pending_password → pending_mfa → active | expired
 model User {
-  id           String   @id @default(cuid())
-  email        String   @unique
-  passwordHash String
-  mfaEnabled   Boolean  @default(false)
-  mfaSecret    String?
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id                 String   @id @default(cuid())
+  username           String   @unique
+  passwordHash       String?
+  mfaEnc             String?
+  gendate            DateTime @default(now())
+  expired            Boolean  @default(false)
+  mfaEnabled         Boolean  @default(false)
+  status             String   @default("pending_password")
+  passwordQrUsed     Boolean  @default(false)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
 
   sessions Session[]
 }

@@ -1,0 +1,38 @@
+version: 1.0
+provider:
+  name: openfaas
+  gateway: http://127.0.0.1:8080
+
+functions:
+  fn-auth:
+    lang: dockerfile
+    handler: ./apps/fn-auth
+    image: cofrap/fn-auth:latest
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+      ENCRYPTION_KEY: ${ENCRYPTION_KEY}
+    limits:
+      memory: 256Mi
+      cpu: 100m
+
+  fn-mfa:
+    lang: dockerfile
+    handler: ./apps/fn-mfa
+    image: cofrap/fn-mfa:latest
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+      ENCRYPTION_KEY: ${ENCRYPTION_KEY}
+    limits:
+      memory: 256Mi
+      cpu: 100m
+
+  fn-password:
+    lang: dockerfile
+    handler: ./apps/fn-password
+    image: cofrap/fn-password:latest
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+      ENCRYPTION_KEY: ${ENCRYPTION_KEY}
+    limits:
+      memory: 256Mi
+      cpu: 100m

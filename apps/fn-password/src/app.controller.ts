@@ -1,6 +1,5 @@
 import { Body, Controller, Get, Post } from '@nestjs/common';
-import * as bcrypt from 'bcrypt';
-import { passwordSchema } from '@cofrap/shared-types';
+import { generatePasswordSchema } from '@cofrap/shared-types';
 import { AppService } from './app.service';
 
 @Controller()
@@ -12,25 +11,13 @@ export class AppController {
     return this.appService.getHealth();
   }
 
-  @Post('hash')
-  async hashPassword(@Body() body: { password: string }) {
-    const parsed = passwordSchema.safeParse(body.password);
+  @Post('generate')
+  async generate(@Body() body: unknown) {
+    const parsed = generatePasswordSchema.safeParse(body);
     if (!parsed.success) {
-      return { success: false, errors: parsed.error.flatten().formErrors };
+      return { success: false, errors: parsed.error.flatten().fieldErrors };
     }
 
-    const hash = await bcrypt.hash(parsed.data, 12);
-    return { success: true, hash };
-  }
-
-  @Post('validate')
-  async validatePassword(@Body() body: { password: string; hash: string }) {
-    const parsed = passwordSchema.safeParse(body.password);
-    if (!parsed.success) {
-      return { success: false, errors: parsed.error.flatten().formErrors };
-    }
-
-    const valid = await bcrypt.compare(parsed.data, body.hash);
-    return { success: true, valid };
+    return this.appService.generateForUser(parsed.data.username, parsed.data.renew ?? false);
   }
 }

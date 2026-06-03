@@ -1,7 +1,6 @@
-# Build depuis la racine du monorepo :
 # docker build -f apps/fn-auth/Dockerfile -t cofrap/fn-auth .
 
-FROM node:20-alpine AS base
+FROM node:22-alpine AS base
 WORKDIR /app
 
 FROM base AS deps
@@ -9,6 +8,7 @@ COPY package.json package-lock.json turbo.json ./
 COPY apps/fn-auth/package.json ./apps/fn-auth/
 COPY packages/database/package.json ./packages/database/
 COPY packages/shared-types/package.json ./packages/shared-types/
+COPY packages/crypto/package.json ./packages/crypto/
 COPY packages/typescript-config/package.json ./packages/typescript-config/
 RUN npm ci
 
@@ -17,10 +17,11 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 RUN npm run db:generate --workspace=@cofrap/database
 RUN npm run build --workspace=@cofrap/shared-types
+RUN npm run build --workspace=@cofrap/crypto
 RUN npm run build --workspace=@cofrap/database
 RUN npm run build --workspace=fn-auth
 
-FROM node:20-alpine AS runner
+FROM node:22-alpine AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 ENV PORT=8080

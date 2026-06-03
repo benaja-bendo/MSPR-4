@@ -1,60 +1,66 @@
-# COFRAP Monorepo
+# COFRAP Monorepo — PoC MSPR Serverless
 
-Monorepo Turborepo pour la plateforme COFRAP (auth, MFA, mots de passe).
+Monorepo Turborepo : auth, MFA, génération de mot de passe (OpenFaaS / NestJS).
+
+## Documentation
+
+| Document | Contenu |
+|----------|---------|
+| **[Guide démarrage local (complet)](docs/guide-demarrage-local.md)** | Installation, PostgreSQL, lancement des 3 fonctions + frontend, tests, dépannage |
+| [Intégration K8s / OpenFaaS](docs/integration-k8s.md) | Déploiement cluster, Ingress, secrets |
+
+## Conformité MSPR (résumé)
+
+| Exigence | Implémentation |
+|----------|----------------|
+| MDP auto 24 car. (4 types) | `fn-password` + `@cofrap/crypto` |
+| QR MDP usage unique | `passwordQrUsed` + réponse QR une fois |
+| 2FA obligatoire à l'activation | `fn-mfa/setup` + `confirm` → `status: active` |
+| 2FA au login | `fn-auth/login` + `otplib` |
+| Expiration 6 mois | `gendate` + `isCredentialExpired` |
+| MFA chiffré en BDD | `mfaEnc` (AES-256-GCM) |
+| MDP hash sécurisé | `passwordHash` (bcrypt) |
 
 ## Structure
 
 ```
-cofrap-monorepo/
-├── apps/
-│   ├── frontend/      # Next.js (UI)
-│   ├── fn-auth/       # NestJS → OpenFaaS (authentification)
-│   ├── fn-mfa/        # NestJS → OpenFaaS (MFA)
-│   └── fn-password/   # NestJS → OpenFaaS (hash / validation)
-├── packages/
-│   ├── database/      # Prisma + PostgreSQL
-│   ├── shared-types/  # DTOs Zod + interfaces TypeScript
-│   ├── eslint-config/
-│   └── typescript-config/
-└── turbo.json
+apps/frontend, fn-auth, fn-mfa, fn-password
+packages/database, shared-types, crypto
+deploy/stack.yml
+docker-compose.yml          # PostgreSQL local
+docs/guide-demarrage-local.md
+scripts/test-api.ps1        # Vérification health des fonctions
 ```
-
-## Prérequis
-
-- Node.js >= 18
-- PostgreSQL (local ou conteneur)
 
 ## Démarrage rapide
 
-```bash
-# 1. Installer les dépendances
+```powershell
 npm install
-
-# 2. Configurer la base de données
-cp packages/database/.env.example packages/database/.env
+Copy-Item packages\database\.env.example packages\database\.env
+Copy-Item apps\frontend\.env.example apps\frontend\.env.local
+docker compose up -d
 npm run db:generate
-# Appliquer les migrations (recommandé — local ou cluster)
 npm run db:migrate:deploy
-# Alternative rapide en dev uniquement : npm run db:push
-
-# 3. Lancer tout en dev
-npm run dev
+npm run build
 ```
 
-## Ports
+Puis lancer **4 terminaux** (détails, variables d’env, tests navigateur) :
 
-| Application   | Port dev |
-|---------------|----------|
-| frontend      | 3000     |
-| fn-auth       | 8080     |
-| fn-mfa        | 8080     |
-| fn-password   | 8080     |
+→ **[docs/guide-demarrage-local.md](docs/guide-demarrage-local.md)**
 
-> En dev local, lancez une seule fonction NestJS à la fois (même port 8080 OpenFaaS).
+Vérification rapide :
 
-## Docker (OpenFaaS)
+```powershell
+.\scripts\test-api.ps1
+```
 
-Depuis la racine du monorepo :
+## Parcours démo
+
+1. **Créer un compte** : username → QR mot de passe → QR 2FA → code 6 chiffres  
+2. **Connexion** : username + mot de passe (du QR) + code 2FA  
+3. **Renouvellement** : lien sur la page login si expiration  
+
+## Docker (fonctions)
 
 ```bash
 docker build -f apps/fn-auth/Dockerfile -t cofrap/fn-auth .
@@ -62,11 +68,8 @@ docker build -f apps/fn-mfa/Dockerfile -t cofrap/fn-mfa .
 docker build -f apps/fn-password/Dockerfile -t cofrap/fn-password .
 ```
 
-## Scripts utiles
+## Scripts racine
 
-- `npm run build` — compile tous les packages et apps
-- `npm run dev` — mode développement (Turbo)
-- `npm run db:generate` — génère le client Prisma
-- `npm run db:push` — synchronise le schéma avec PostgreSQL
-- `npm run db:migrate` — créer une nouvelle migration en dev (`prisma migrate dev`)
-- `npm run db:migrate:deploy` — appliquer les migrations SQL (prod / K8s / collègue infra)
+- `npm run db:migrate:deploy` — migrations production / cluster
+- `npm run build` — compile tout le monorepo
+- `docker compose up -d` — PostgreSQL local
