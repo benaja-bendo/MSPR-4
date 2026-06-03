@@ -1,0 +1,47 @@
+# Remplacer l'image par votre Registry Scaleway avant apply.
+# Exemple : rg.fr-par.scw.cloud/cofrap-mspr/frontend:latest
+#
+# Prérequis : secret docker-registry "scw-registry" dans le namespace cofrap
+#   kubectl create secret docker-registry scw-registry ...
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+  namespace: cofrap
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      imagePullSecrets:
+        - name: scw-registry
+      containers:
+        - name: frontend
+          image: rg.fr-par.scw.cloud/cofrap-mspr/frontend:latest
+          ports:
+            - containerPort: 3000
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend
+  namespace: cofrap
+spec:
+  selector:
+    app: frontend
+  ports:
+    - port: 3000
+      targetPort: 3000

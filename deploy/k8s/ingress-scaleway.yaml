@@ -1,0 +1,46 @@
+# Ingress pour Scaleway Kapsule (Ingress Controller NGINX + Load Balancer)
+# 1. Remplacer cofrap.votredomaine.fr par votre domaine
+# 2. Pointer un enregistrement DNS A vers l'EXTERNAL-IP du service ingress-nginx-controller
+# 3. kubectl apply -f deploy/k8s/ingress-scaleway.yaml
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: cofrap-frontend
+  namespace: cofrap
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: "10m"
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: cofrap.votredomaine.fr
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: frontend
+                port:
+                  number: 3000
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: cofrap-openfaas
+  namespace: openfaas
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: "10m"
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: cofrap.votredomaine.fr
+      http:
+        paths:
+          - path: /function
+            pathType: Prefix
+            backend:
+              service:
+                name: gateway
+                port:
+                  number: 8080

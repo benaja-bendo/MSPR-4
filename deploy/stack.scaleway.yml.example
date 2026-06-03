@@ -1,0 +1,46 @@
+# Copier vers deploy/stack.scaleway.yml et remplacer REGISTRY par votre namespace Scaleway.
+# Exemple : rg.fr-par.scw.cloud/cofrap-mspr
+#
+# Déploiement :
+#   $env:DATABASE_URL = "postgresql://..."
+#   $env:ENCRYPTION_KEY = "..."
+#   faas-cli deploy -f deploy/stack.scaleway.yml --gateway http://127.0.0.1:8080
+
+version: 1.0
+provider:
+  name: openfaas
+  gateway: http://127.0.0.1:8080
+
+functions:
+  fn-auth:
+    lang: dockerfile
+    handler: ./apps/fn-auth
+    image: REGISTRY/fn-auth:latest
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+      ENCRYPTION_KEY: ${ENCRYPTION_KEY}
+    limits:
+      memory: 256Mi
+      cpu: 100m
+
+  fn-mfa:
+    lang: dockerfile
+    handler: ./apps/fn-mfa
+    image: REGISTRY/fn-mfa:latest
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+      ENCRYPTION_KEY: ${ENCRYPTION_KEY}
+    limits:
+      memory: 256Mi
+      cpu: 100m
+
+  fn-password:
+    lang: dockerfile
+    handler: ./apps/fn-password
+    image: REGISTRY/fn-password:latest
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+      ENCRYPTION_KEY: ${ENCRYPTION_KEY}
+    limits:
+      memory: 256Mi
+      cpu: 100m

@@ -9,6 +9,7 @@ node_modules
 .env
 .env.local
 deploy/k8s/secrets.yaml
+deploy/stack.scaleway.yml
 .env.development.local
 .env.test.local
 .env.production.local
