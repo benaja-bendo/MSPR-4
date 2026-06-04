@@ -1,5 +1,5 @@
 const authBase = process.env.NEXT_PUBLIC_FN_AUTH_URL ?? "http://localhost:8080";
-const passwordBase = process.env.NEXT_PUBLIC_FN_PASSWORD_URL ?? "http://localhost:8082";
+const passwordBase = process.env.NEXT_PUBLIC_FN_PASSWORD_URL ?? "http://localhost:8083";
 const mfaBase = process.env.NEXT_PUBLIC_FN_MFA_URL ?? "http://localhost:8081";
 
 async function postJson<T>(url: string, body: unknown): Promise<T> {

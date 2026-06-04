@@ -24,6 +24,7 @@
     "@cofrap/crypto": "*",
     "@cofrap/database": "*",
     "@cofrap/shared-types": "*",
+    "dotenv": "^16.4.7",
     "@nestjs/common": "^11.0.1",
     "otplib": "^12.0.1",
     "qrcode": "^1.5.4",
