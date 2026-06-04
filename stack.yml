@@ -1,0 +1,38 @@
+version: 1.0
+provider:
+  name: openfaas
+  gateway: http://127.0.0.1:8080
+
+functions:
+  fn-auth:
+    image: localhost:5000/cofrap/fn-auth:latest
+    namespace: openfaas-fn
+    environment:
+      DATABASE_URL: "postgresql://cofrap:cofrap_secret@postgres.cofrap.svc.cluster.local:5432/cofrap"
+      ENCRYPTION_KEY: "${ENCRYPTION_KEY}"
+      NODE_ENV: production
+    labels:
+      com.openfaas.scale.min: "1"
+      com.openfaas.scale.max: "5"
+
+  fn-mfa:
+    image: localhost:5000/cofrap/fn-mfa:latest
+    namespace: openfaas-fn
+    environment:
+      DATABASE_URL: "postgresql://cofrap:cofrap_secret@postgres.cofrap.svc.cluster.local:5432/cofrap"
+      ENCRYPTION_KEY: "${ENCRYPTION_KEY}"
+      NODE_ENV: production
+    labels:
+      com.openfaas.scale.min: "1"
+      com.openfaas.scale.max: "5"
+
+  fn-password:
+    image: localhost:5000/cofrap/fn-password:latest
+    namespace: openfaas-fn
+    environment:
+      DATABASE_URL: "postgresql://cofrap:cofrap_secret@postgres.cofrap.svc.cluster.local:5432/cofrap"
+      ENCRYPTION_KEY: "${ENCRYPTION_KEY}"
+      NODE_ENV: production
+    labels:
+      com.openfaas.scale.min: "1"
+      com.openfaas.scale.max: "5"
